@@ -26,27 +26,31 @@ def sleep_script(seconds='normal'):
 		time.sleep(seconds)
 		return
 
-def init_browser(type='firefox', options={'headless': False, 'maximize_window': True}):
+def init_browser(type='firefox', options={'headless': False, 'maximize_window': True}, profile=False):
+	# print("Proxy"+ proxy)
 	## Initialize Firefox browser
 	options = Options()
 	options.add_argument("--headless")
 	# browser = webdriver.Firefox(firefox_options=options)
-	browser = webdriver.Firefox()
+	if profile == False:
+		browser = webdriver.Firefox()
+	else:
+		browser = webdriver.Firefox(firefox_profile=profile)
+	# 	browser = webdriver.Firefox(profile)
 	## Maximize window and open the base url
 	browser.maximize_window()
 	return browser
 
-def my_proxy(PROXY_HOST,PROXY_PORT):
-        fp = webdriver.FirefoxProfile()
-        # Direct = 0, Manual = 1, PAC = 2, AUTODETECT = 4, SYSTEM = 5
-        print PROXY_PORT
-        print PROXY_HOST
-        fp.set_preference("network.proxy.type", 1)
-        fp.set_preference("network.proxy.http",PROXY_HOST)
-        fp.set_preference("network.proxy.http_port",int(PROXY_PORT))
-        fp.set_preference("general.useragent.override","whater_useragent")
-        fp.update_preferences()
-        return webdriver.Firefox(firefox_profile=fp)
+def set_proxy(host=None, port=None):
+	if host == None:
+		return False
+	profile = webdriver.FirefoxProfile()
+	profile.set_preference("network.proxy.type", 1)
+	profile.set_preference("network.proxy.http", host)
+	profile.set_preference("network.proxy.http_port", port)
+	profile.set_preference("network.proxy.ssl", host)
+	profile.set_preference("network.proxy.ssl_port", port)
+	return profile
 
 def open_url(browser, url):
 	print("Loading "+ str(url))

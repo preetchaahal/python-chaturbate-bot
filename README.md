@@ -1,5 +1,5 @@
-Chaturbate-registration-bot
----------------------------
+Chaturbate-registration-bot v0.0.9
+----------------------------------
 
 #This bot performs following tasks:
 

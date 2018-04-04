@@ -25,6 +25,19 @@ class DbConn:
 			print(e)
 		self.con.commit()
 
+	def update(self, table, dataset, condition):
+		cur = self.con.cursor()
+		# keys_set = [key for key in dataset]
+		# cols = ",".join(keys_set)
+		# values_set = ["\'"+dataset[key]+"\'" for key in dataset]
+		# values = ",".join(dataset)
+		try:
+			cur.execute("UPDATE %s SET %s WHERE %s" % (table, dataset, condition))
+		except Exception as e:
+			# incase of any db exception.
+			print(e)
+		self.con.commit()
+
 	def select(self, table, dict=False, condition=False):
 		if dict:
 			cur = self.con.cursor(cursor_factory=psycopg2.extras.DictCursor)

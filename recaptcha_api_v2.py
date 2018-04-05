@@ -41,8 +41,16 @@ class RecaptchaAPI:
 
 	def process_reptcha_request(self):
 		# self.user_answer = NoCaptchaTaskProxyless(anticaptcha_key = self.ANTICAPTCHA_KEY).captcha_handler(websiteURL=self.PAGE_URL, websiteKey=self.SITE_KEY)
-		# self.
-		self.user_answer = NoCaptchaTaskProxyless.NoCaptchaTaskProxyless(anticaptcha_key = self.ANTICAPTCHA_KEY).captcha_handler(websiteURL=self.PAGE_URL, websiteKey=self.SITE_KEY)
+		# self
+		repeat = False
+		while not repeat:
+			try:
+				self.user_answer = NoCaptchaTaskProxyless.NoCaptchaTaskProxyless(anticaptcha_key = self.ANTICAPTCHA_KEY).captcha_handler(websiteURL=self.PAGE_URL, websiteKey=self.SITE_KEY)
+				repeat = True
+			except:
+				print("Error connecting re-captcha service.. Retrying")
+				time.sleep(1)
+				repeat = False
 		return self.user_answer
 
 	def get_response(self):

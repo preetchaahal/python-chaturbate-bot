@@ -54,12 +54,12 @@ class Proxy:
 	proxy_port = None
 	browser = None
 	proxies = []
-	tier_1_countries_test = ['AU', 'AT', 'BE', 'CA', 'CO', 'HR', 
+	tier_1_countries_all = ['AU', 'AT', 'BE', 'CA', 'CO', 'HR', 
 		 	 'CZ', 'DK', 'FI', 'GE', 'DE', 'IE', 
 		 	 'IL', 'IT', 'KR', 'LT', 'LU', 'MK', 
 		 	 'MU', 'NL', 'NZ', 'NI', 'NO', 'PL',
 		 	 'SK', 'SI', 'ES', 'TW', 'GB', 'US']
-	tier_1_countries = ['USc']
+	tier_1_countries = ['US']
 
 	def get_browser(self):
 		return self.browser
@@ -70,8 +70,7 @@ class Proxy:
 		return True
 
 	def log(self, type, data):
-		logging.basicConfig(filename=self.log_file,level=logging.DEBUG)
-		logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+		logging.basicConfig(filename=self.log_file,level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 		if type == 'error':
 			logging.error(data)
 		else:
@@ -119,6 +118,14 @@ class Proxy:
 			print("Exception when tryinh to cehck is page blocked by captcha")
 			print(e)
 			return False
+
+	def is_jQuery_rendered_completely(self):
+		try:
+			self.execute_script(self.browser, "$ === jQuery")
+		except:
+			print("Jquery not loaded!")
+			return False
+		return True
 
 	def browse_url(self, url):
 		browser = self.browser
@@ -168,6 +175,7 @@ class Proxy:
 
 	def open_url(self, browser, url):
 		print("Loading "+ str(url))
+		time.sleep(30)
 		repeat = False
 		while not repeat:
 			try:
@@ -177,6 +185,7 @@ class Proxy:
 			except:
 				print("Something went wrong loading the requested page, trying again!")
 				repeat = False
+				self.sleep_script(1)
 		print("Page loaded successfully")
 		return True
 

@@ -3,7 +3,6 @@ import sys
 import time
 from faker import *
 from db_helpers import *
-# from scraping_helpers import *
 from proxies_scrape import *
 from recaptcha_api_v2 import *
 
@@ -25,6 +24,7 @@ Fake creds include
 
 #Step 3
 - Begin registration per DB record
+- Read proxies and perform registration by switching between the read proxies
 
 """
 
@@ -39,9 +39,9 @@ proxies = web.proxies
 print("proxies")
 print(proxies)
 print("Generating users")
-max_limit = 10
 web.log('info', 'Generating users with dummy data')
 db = DbConn()
+max_limit = db.user_limit
 
 faker = Faker()
 data_sets = faker.generate_data(max_limit)
@@ -54,7 +54,7 @@ for data_set in data_sets:
 	counter += 1
 
 print("Fetching data")
-users = db.select("users", True, "status = True")
+users = db.select("users", True, "status = False")
 
 browser = web.get_browser()
 
@@ -86,6 +86,27 @@ while i < len(users):
 	if i < 0:
 		i = 0
 	user = users[i]
+
+	# After every 40 users re-load proxies
+	if i % 2 == 0 and i > 0:
+		print("Re-load proxies")
+		web.log('info', 'Reading proxies')
+		web.process_proxies()
+		proxies = web.proxies
+		print("proxies")
+		print(proxies)
+
+		web.log('info', 'Read %s proxies' % len(proxies))
+		proxy_set = []
+		for prox in proxies:
+			i = 0
+			for prox_inner in prox['proxies']:
+				if i == 0:
+					i += 1
+					continue
+				proxy_set.append({'ip': prox_inner['ip'], 'port': prox_inner['port']})
+				web.log('info', 'IP: %s PORT: %s' % (prox_inner['ip'], prox_inner['port']))
+
 	print("Working with user: i="+ str(i))
 	print(user)
 	# user = {'username': 'preet321098', 'password': 'ajdb53$asn!20', 'email': 'preet321098@gmail.com', 'dob': '3-4-1992', 'gender': 'm'}
@@ -117,7 +138,6 @@ while i < len(users):
 	URL_REGISTER = "https://chaturbate.com/accounts/register/"
 	# Scraping in case of single user
 	web.browse_url(URL_REGISTER)
-	print("Auto-filling details")
 
 	# Check if captcha page encountered
 	page_blocked_by_captcha = web.is_page_blocked_by_captcha()
@@ -138,6 +158,8 @@ while i < len(users):
 		web.log('error', 'Re-Captcha key not found, restarting wuth a  different proxy configuration')
 		continue
 
+	print("Auto-filling details")
+
 	web.log('info', 'Registration under way...')
 	web.log('info', 'Re-Captcha key: %s' % (captcha_site_key))
 	print("Re-Captcha key")
@@ -145,6 +167,14 @@ while i < len(users):
 
 	api = RecaptchaAPI(captcha_site_key)
 	web.log('info', 'Re-Captcha auto-solve requested')
+
+	if not web.is_jQuery_rendered_completely():
+		print("Page not loaded completely, restarting the operation...")
+		i = i - 1
+		web.close_browser()
+		web.log('error', 'Failed to perform registration with IP: %s PORT: %s, restarting with a different proxy configuration. Page didnt load up completely ' % (prox_inner['ip'], prox_inner['port']))
+		continue
+
 
 	web.form_input_text(browser, "input[name=\'username\']", user['username'], True)
 	web.form_input_text(browser, "input[name=\'password\']", user['password'], True)

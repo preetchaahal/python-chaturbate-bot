@@ -61,5 +61,5 @@ class Faker:
 
 	def generate_data(self, registration_limit):
 		print("Generating random data for "+ str(registration_limit))
-		return [{'username': self.get_random_string(self.letters, 10), 'password': self.get_random_string(self.letters+self.symbols+self.numbers, 12, True), 'email': self.get_random_email(9), 'dob': self.get_random_dob(), 'gender': self.get_random_gender()} for i in range(registration_limit)]
+		return [{'username': self.get_random_string(self.letters, random.randint(9, 15)), 'password': self.get_random_string(self.letters+self.symbols+self.numbers, 12, True), 'email': self.get_random_email(random.randint(9, 14)), 'dob': self.get_random_dob(), 'gender': self.get_random_gender()} for i in range(registration_limit)]
 		

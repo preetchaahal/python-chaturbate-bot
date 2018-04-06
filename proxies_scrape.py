@@ -86,7 +86,7 @@ class Proxy:
 		else:
 			print("Setting profile for firefox")
 			profile = self.set_proxy_profile(proxy_obj['ip'], proxy_obj['port'])
-			print(profile)
+			# print(profile)
 			browser = webdriver.Firefox(firefox_profile = profile)
 			self.browser = browser
 		browser.maximize_window()
@@ -116,7 +116,7 @@ class Proxy:
 			return True
 		except Exception as e:
 			print("Exception when tryinh to cehck is page blocked by captcha")
-			print(e)
+			# print(e)
 			return False
 
 	def is_jQuery_rendered_completely(self):
@@ -175,7 +175,7 @@ class Proxy:
 
 	def open_url(self, browser, url):
 		print("Loading "+ str(url))
-		time.sleep(30)
+		# time.sleep(30)
 		repeat = False
 		while not repeat:
 			try:
@@ -191,7 +191,7 @@ class Proxy:
 
 	def sleep_script(self, seconds='normal'):
 		if seconds == 'normal':
-			time.sleep(2)
+			time.sleep(0.5)
 			return
 		else:
 			time.sleep(seconds)
@@ -270,6 +270,6 @@ class Proxy:
 				proxies.append({'ip': proxy, 'port': port})
 			except Exception as e:
 				print('Exception')
-				print(e)
+				# print(e)
 			# self.sleep_script(3)
 		return proxies

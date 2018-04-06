@@ -28,7 +28,7 @@ Fake creds include
 
 """
 
-print("Initializing Chaturbate-Random-Registration Bot v0.09")
+print("Initializing Chaturbate-Random-Registration Bot v0.0.9")
 proxies = []
 web = Proxy(False)
 web.log('info', 'Starting **Chaturbate Random Registration Bot**')
@@ -87,25 +87,27 @@ while i < len(users):
 		i = 0
 	user = users[i]
 
-	# After every 40 users re-load proxies
-	if i % 2 == 0 and i > 0:
-		print("Re-load proxies")
-		web.log('info', 'Reading proxies')
-		web.process_proxies()
-		proxies = web.proxies
-		print("proxies")
-		print(proxies)
+	# After every X users re-load proxies
+	# if i % 1 == 0 and i > 0:
+	# 	web = Proxy(False)
+	# 	print("Re-load proxies")
+	# 	web.log('info', 'Reading proxies')
+	# 	web.process_proxies()
+	# 	proxies = web.proxies
+	# 	print("proxies")
+	# 	print(proxies)
 
-		web.log('info', 'Read %s proxies' % len(proxies))
-		proxy_set = []
-		for prox in proxies:
-			i = 0
-			for prox_inner in prox['proxies']:
-				if i == 0:
-					i += 1
-					continue
-				proxy_set.append({'ip': prox_inner['ip'], 'port': prox_inner['port']})
-				web.log('info', 'IP: %s PORT: %s' % (prox_inner['ip'], prox_inner['port']))
+	# 	web.log('info', 'Read %s proxies' % len(proxies))
+	# 	proxy_set = []
+	# 	for prox in proxies:
+	# 		j = 0
+	# 		for prox_inner in prox['proxies']:
+	# 			if j == 0:
+	# 				j += 1
+	# 				continue
+	# 			proxy_set.append({'ip': prox_inner['ip'], 'port': prox_inner['port']})
+	# 			web.log('info', 'IP: %s PORT: %s' % (prox_inner['ip'], prox_inner['port']))
+	# 	web.close_browser()
 
 	print("Working with user: i="+ str(i))
 	print(user)
@@ -136,7 +138,11 @@ while i < len(users):
 	# continue
 	# Web Scraping
 	URL_REGISTER = "https://chaturbate.com/accounts/register/"
+	AFFLIATE_URL = "https://chaturbate.com/in/?tour=OT2s&campaign=KwaKM"
+	
 	# Scraping in case of single user
+	print("Opening affliate url")
+	web.browse_url(AFFLIATE_URL)
 	web.browse_url(URL_REGISTER)
 
 	# Check if captcha page encountered
@@ -144,7 +150,6 @@ while i < len(users):
 	if page_blocked_by_captcha:
 		print(web.is_page_blocked_by_captcha())
 		print("Restarting the operation...")
-		i = i - 1
 		web.close_browser()
 		web.log('error', 'Failed to perform registration with IP: %s PORT: %s, restarting with a different proxy configuration.' % (prox_inner['ip'], prox_inner['port']))
 		continue
@@ -152,7 +157,6 @@ while i < len(users):
 	## Working with re-captcha
 	captcha_site_key = web.get_site_captcha_key()
 	if not captcha_site_key:
-		i = i - 1
 		web.close_browser()
 		print("Unable to find google captcha key, switching proxy")
 		web.log('error', 'Re-Captcha key not found, restarting wuth a  different proxy configuration')
@@ -170,7 +174,6 @@ while i < len(users):
 
 	if not web.is_jQuery_rendered_completely():
 		print("Page not loaded completely, restarting the operation...")
-		i = i - 1
 		web.close_browser()
 		web.log('error', 'Failed to perform registration with IP: %s PORT: %s, restarting with a different proxy configuration. Page didnt load up completely ' % (prox_inner['ip'], prox_inner['port']))
 		continue
@@ -195,7 +198,7 @@ while i < len(users):
 	web.form_input_text(browser, "textarea[id=\'g-recaptcha-response\']", captcha_solved['solution']['gRecaptchaResponse'], True)
 	web.execute_script(browser, "document.getElementsByTagName(\'form\')[1].submit();")
 	web.log('info', 'Attempting registration')
-	time.sleep(10)
+	time.sleep(4)
 	print("Registration successful")
 	web.log('info', 'Registration successful')
 	web.log('info', '***********************')

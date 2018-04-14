@@ -8,7 +8,7 @@ class DbConn:
 	password = "password"
 	dbname = "chaturbate_bot"
 	users_table = "users"
-	user_limit = 10
+	user_limit = 200
 
 	def __init__(self):
 		self.con = psycopg2.connect(user=self.user, password=self.password, host=self.host, database=self.dbname)

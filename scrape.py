@@ -85,18 +85,19 @@ while i < len(users):
 	web.log('info', '***********************')
 	if i < 0:
 		i = 0
-	user = users[i]
 
 	# After every X users re-load proxies
-	# if i % 1 == 0 and i > 0:
-	# 	web = Proxy(False)
-	# 	print("Re-load proxies")
-	# 	web.log('info', 'Reading proxies')
-	# 	web.process_proxies()
-	# 	proxies = web.proxies
-	# 	print("proxies")
-	# 	print(proxies)
+	if i % 2 == 0 and i != 0:
+		web = Proxy(False)
+		print("Re-load proxies")
+		web.log('info', 'Reading proxies')
+		web.process_proxies()
+		proxies = web.proxies
+		print("proxies")
+		print(proxies)
+		web.close_browser()
 
+	user = users[i]
 	# 	web.log('info', 'Read %s proxies' % len(proxies))
 	# 	proxy_set = []
 	# 	for prox in proxies:
@@ -198,7 +199,7 @@ while i < len(users):
 	web.form_input_text(browser, "textarea[id=\'g-recaptcha-response\']", captcha_solved['solution']['gRecaptchaResponse'], True)
 	web.execute_script(browser, "document.getElementsByTagName(\'form\')[1].submit();")
 	web.log('info', 'Attempting registration')
-	time.sleep(4)
+	time.sleep(5)
 	print("Registration successful")
 	web.log('info', 'Registration successful')
 	web.log('info', '***********************')

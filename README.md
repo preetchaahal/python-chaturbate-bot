@@ -44,11 +44,46 @@ Steps to run
 3. Update DB settings inside db_helpers.py, update host, user, password, dbname and users_table (near line 6). 
 
 3. Run the script
+
+3.1 Run Xvfb in the background and specify a display number 
+- Xvfb :10 -ac &
+
+3.2 Set the DISPLAY variable to the number you chose
+- export DISPLAY=:10
+
+3.3 Run the script
 `python3 scrape.py`
 
 4. To force quit, hit Ctrl + C 
 
 5. Happy registering with the BOT.
+
+
+INSTRUCTIONS FOR BOT DEPLOYED ON VPS
+------------------------------------
+Details:
+Creds- 
+IP Address: 159.65.111.97
+Username: root
+Password: QazWsxEdc!23
+(Since it was the first login, had to change the password, plz update)
+
+Notes:
+#1 Postgresql DB is used to save users details.
+#2 Postgresql creds
+  - database: chaturbate-registration-bot
+  - user: postgres
+  - password: password123
+#3 DB can be accessed online, using following URL
+  - http://159.65.111.97/phppgadmin/
+  - Creds: user: postgres password: password123
+#4 Bot details:
+  - Dir: /var/www/python/
+  - Have configured virtualenv inside /var/www/python/python-random-registration/venv
+  - Virtualenv would mean, that to run the bot following 2 commands need to be executed in order:
+    i) cd /var/www/python/python-random-registration
+    ii) source venv/bin/activate
+    iii) python3 scrape.py
 
 Additional Information
 ----------------------

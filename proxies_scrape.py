@@ -12,6 +12,7 @@ from selenium.webdriver.common.proxy import *
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+
 """
 --- TIER #1 Countries ---
 Australia
@@ -79,15 +80,21 @@ class Proxy:
 
 	def init_browser(self, type='firefox', options={'headless': False, 'maximize_window': True}, proxy_obj=False):
 		## Initialize Firefox browser
+		no_options = True
+		if options['headless']:
+			options = Options()
+			options.add_argument('-headless')
+			no_options = False
 		if proxy_obj == False:
-			print("COntinuing without proxy")
 			browser = webdriver.Firefox()
 			self.browser = browser
 		else:
-			print("Setting profile for firefox")
 			profile = self.set_proxy_profile(proxy_obj['ip'], proxy_obj['port'])
 			# print(profile)
-			browser = webdriver.Firefox(firefox_profile = profile)
+			if no_options:
+				browser = webdriver.Firefox(firefox_profile = profile)
+			else:
+				browser = webdriver.Firefox(firefox_profile = profile, options=options)
 			self.browser = browser
 		browser.maximize_window()
 		return browser
@@ -95,7 +102,6 @@ class Proxy:
 	def __init__(self, proxy=False):
 		self.log_file = "usage.log"
 		if not proxy:
-			print("Setting up without proxy")
 			self.browser = self.init_browser('firefox', {'headless': False, 'maximize_window': True})
 		else:
 			print("Setting up Proxy")
@@ -115,7 +121,6 @@ class Proxy:
 			self.browser.find_element_by_id("cf-error-details").find_element_by_xpath('/div/h1[@data-translate=\"challenge_headline\"]')
 			return True
 		except Exception as e:
-			print("Exception when tryinh to cehck is page blocked by captcha")
 			# print(e)
 			return False
 
@@ -123,7 +128,6 @@ class Proxy:
 		try:
 			self.execute_script(self.browser, "$ === jQuery")
 		except:
-			print("Jquery not loaded!")
 			return False
 		return True
 
@@ -144,7 +148,6 @@ class Proxy:
 	def process_proxies(self):
 
 		for country in self.tier_1_countries:
-			print('Working with'+ country)
 			self.open_url(self.browser, self.url_for_proxy+country+"/")
 			## Change per page to show max records
 			# form_select_option(self.browser, 'xpp', '5')
@@ -191,7 +194,7 @@ class Proxy:
 
 	def sleep_script(self, seconds='normal'):
 		if seconds == 'normal':
-			time.sleep(0.5)
+			time.sleep(90.0/1000.0)
 			return
 		else:
 			time.sleep(seconds)
@@ -265,11 +268,10 @@ class Proxy:
 			try:
 				proxy = row.find('td').text.split('document.write')[0].split(" ")[1]
 				port = row.find('td').text.rsplit(":", 1)[1]
-				print("Proxy and port read==")
+				print("Proxies read:")
 				print(proxy + ":" + port)
 				proxies.append({'ip': proxy, 'port': port})
 			except Exception as e:
-				print('Exception')
-				# print(e)
+				print("Error reading proxies!")
 			# self.sleep_script(3)
 		return proxies

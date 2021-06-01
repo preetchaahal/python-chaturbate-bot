@@ -15,5 +15,5 @@ psycopg2-binary==2.7.4
 python3-anticaptcha==0.9.1
 requests==2.18.4
 selenium==3.11.0
-urllib3==1.22
+urllib3==1.26.5
 yarl==1.1.1
